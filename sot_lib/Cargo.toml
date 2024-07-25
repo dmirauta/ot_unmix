@@ -1,0 +1,8 @@
+[package]
+name = "sot_lib"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+bindgen = "0.69.4"
+cc = "1.1.4"

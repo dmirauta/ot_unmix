@@ -1,0 +1,3 @@
+[workspace]
+members = ["ot_unmix_core", "ot_unmix_gui", "sot_lib", "sot_rs"]
+resolver = "2"

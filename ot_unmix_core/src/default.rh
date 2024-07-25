@@ -1,0 +1,5 @@
+// xy is an array of [x,y] arrays, output is expected in the same format
+fn transform(xy) {
+	// filter out an intermediate range
+    xy.filter(|p| 20.0 > p[0] || p[0] > 30.0)
+}
