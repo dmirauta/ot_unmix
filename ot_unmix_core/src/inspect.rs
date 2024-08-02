@@ -1,6 +1,6 @@
 //! Defines inspect methods for core structs where possible and inspectable wrappers otherwise
 use crate::data::{sort_sticks, CleaningIntermediate, Signature, Stick, XYData};
-use egui::{Color32, Stroke};
+use egui_inspect::egui::{self, Color32, Stroke};
 use egui_inspect::EguiInspect;
 use egui_plot::{Legend, Line, Plot, PlotBounds, PlotPoints, PlotUi, Polygon};
 use ndarray::Array1;
@@ -109,7 +109,7 @@ impl EguiInspect for SmoothingOptions {
 }
 
 /// generic, shared plot setup
-pub fn setup_plot<'a, 'b>(label: &'a str, ui: &'b mut egui::Ui, show_label: bool) -> Plot<'a> {
+pub fn setup_plot<'a>(label: &'a str, ui: &mut egui::Ui, show_label: bool) -> Plot<'a> {
     if show_label {
         ui.label(label);
     }

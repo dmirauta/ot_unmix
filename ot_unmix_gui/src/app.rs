@@ -15,8 +15,11 @@ use std::{
     time::Duration,
 };
 
-use egui::{CentralPanel, Color32, RichText, ScrollArea, Slider, TopBottomPanel, Window};
-use egui_inspect::EguiInspect;
+use egui_inspect::{eframe, logging::LogsView, EguiInspect};
+use egui_inspect::{
+    egui::{self, CentralPanel, ScrollArea, Slider, TopBottomPanel, Window},
+    logging::{setup_mixed_logger, FileLogOption},
+};
 use log::{error, info, warn};
 use ndarray::{s, Array1, Array2, Axis};
 
@@ -31,7 +34,7 @@ use ot_unmix_core::{
 use crate::components::SubstepParameters;
 
 use super::components::{
-    smoothed_sig, ExportOptions, FeedbackUi, IndexSelection, IndexSelectionUi, InitialParams,
+    smoothed_sig, ExportOptions, IndexSelection, IndexSelectionUi, InitialParams,
     PeriodicCmapFreqs, PreviewedComponent, SummaryTable, TransportPlanVis,
 };
 
@@ -43,7 +46,6 @@ static COMPS_IDXS_INFO: &str =
     "for the comps preview, enter indices as comma separated (no spaces), hit reset to apply";
 
 thread_local! {
-    pub static FEEDBACK: RefCell<FeedbackUi> = Default::default();
     pub static CMAP_FREQS: RefCell<PeriodicCmapFreqs> = Default::default();
     pub static KNOWN_BASES: RefCell<TaggedSignatures> = Default::default();
     pub static BACKGROUND_COMPUTE: RefCell<BackgroundComputeState> = Default::default();
@@ -150,35 +152,6 @@ enum BackgroundComputeState {
     Ready,
 }
 
-pub fn set_feedback(rt: RichText) {
-    FEEDBACK.with_borrow_mut(|f| {
-        f.push(rt);
-    });
-}
-
-struct GuiLogger;
-
-impl log::Log for GuiLogger {
-    fn enabled(&self, _metadata: &log::Metadata) -> bool {
-        true
-    }
-
-    fn log(&self, record: &log::Record) {
-        if self.enabled(record.metadata()) {
-            let color = match record.level() {
-                log::Level::Error => Color32::RED,
-                log::Level::Warn => Color32::GOLD,
-                log::Level::Info => Color32::WHITE,
-                log::Level::Debug => Color32::WHITE,
-                log::Level::Trace => Color32::WHITE,
-            };
-            set_feedback(RichText::new(record.args().to_string()).color(color));
-        }
-    }
-
-    fn flush(&self) {}
-}
-
 pub fn update_global_bounds<'a>(sigs: impl Iterator<Item = &'a Signature>) {
     SMOOTHING_OPT.with_borrow_mut(|so| {
         so.set_max_span(sigs);
@@ -200,10 +173,19 @@ pub struct DecompGUIApp {
 }
 
 impl DecompGUIApp {
-    pub fn new(data_dir: Option<PathBuf>, decomp_path: Option<PathBuf>) -> Self {
-        log::set_boxed_logger(Box::new(GuiLogger))
-            .map(|()| log::set_max_level(log::LevelFilter::Info))
-            .unwrap();
+    pub fn new(
+        data_dir: Option<PathBuf>,
+        decomp_path: Option<PathBuf>,
+        log_path: Option<PathBuf>,
+    ) -> Self {
+        let flo = match log_path {
+            Some(log_path) => FileLogOption::FullPath { log_path },
+            None => FileLogOption::DefaultTempDir {
+                log_name: "ot_unmix_log".into(),
+            },
+        };
+        setup_mixed_logger(flo);
+
         let mut n = Self {
             cleaning_pipeline: Arc::new(Mutex::new(default_pipeline())),
             n_previewed: 3,
@@ -497,9 +479,7 @@ impl eframe::App for DecompGUIApp {
                 }
             });
 
-            FEEDBACK.with_borrow(|f| {
-                f.inspect("", ui);
-            });
+            LogsView.inspect_mut("Feedback:", ui);
         });
 
         CentralPanel::default().show(ctx, |ui| {

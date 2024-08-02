@@ -6,11 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-eframe = { version = "0.28", optional = true }
-egui = { version = "0.28", optional = true }
+egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_28", optional = true }
 egui_extras = { version = "0.28", optional = true }
 egui_plot = { version = "0.28", optional = true }
-egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_28", optional = true }
 rfd = { version = "0.14", optional = true }
 ocl = "0.19"
 # simple_ocl = { path = "../../simple_ocl/simple_ocl" }
@@ -25,9 +23,9 @@ serde = "1.0"
 bson = "2.7"
 rhai = { version = "1.18", features = ["sync"] }
 rayon = "1.8"
-iter_tools = "0.19"
+iter_tools = "0.20"
 log = "0.4"
 constcat = "0.5"
 
 [features]
-gui = ["eframe", "egui", "egui_extras", "egui_plot", "egui_inspect", "rfd"]
+gui = ["dep:egui_extras", "dep:egui_plot", "dep:egui_inspect", "dep:rfd"]

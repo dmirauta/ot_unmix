@@ -7,17 +7,17 @@ edition = "2021"
 
 [dependencies]
 ot_unmix_core = { path = "../ot_unmix_core", features = ["gui"] }
-eframe = "0.28"
-egui = "0.28"
+egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_28", features = [
+  "logging",
+] }
 egui_extras = "0.28"
 egui_plot = "0.28"
-egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_28" }
 rfd = "0.14"
 # vectoriselp = { path = "../vectorise_lp" }
 ndarray = { version = "0.15", features = ["approx", "serde"] }
 ndarray-rand = "0.14"
 chrono = "0.4"
 serde = "1.0"
-iter_tools = "0.19"
+iter_tools = "0.20"
 log = "0.4"
 clap = { version = "4.5", features = ["derive"] }

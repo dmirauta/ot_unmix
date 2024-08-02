@@ -1,4 +1,4 @@
-use egui_inspect::EguiInspect;
+use egui_inspect::{EguiInspect, egui};
 use log::error;
 use rhai::{
     packages::{

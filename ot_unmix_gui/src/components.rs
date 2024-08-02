@@ -1,10 +1,11 @@
 //! Defines visual elements/subsections of the GUI.
 
-use std::{collections::VecDeque, error::Error, ops::Range, str::FromStr, time::SystemTime};
+use std::{error::Error, ops::Range, str::FromStr};
 
-use chrono::{DateTime, Local};
-use egui::{text::LayoutJob, Align, Color32, ComboBox, FontSelection, RichText, Stroke, Style};
 use egui_extras::{Column, TableBuilder};
+use egui_inspect::egui::{
+    self, text::LayoutJob, Align, Color32, ComboBox, FontSelection, RichText, Stroke, Style,
+};
 use egui_inspect::EguiInspect;
 use egui_plot::{Line, Plot, PlotBounds, PlotPoints, PlotUi, Polygon};
 use log::warn;
@@ -28,69 +29,6 @@ static SEG_COST_INFO: &str =
     "Segmentation cost (without penalties if applicable), indicating amount of overall \"warping\".
     Anom and non-anom versions may not currently be comparable!";
 // TODO: Check consistency of anom and non-anom seg costs...
-
-pub struct FeedbackUi {
-    pub items: VecDeque<(SystemTime, RichText, u32)>,
-    num_shown: usize,
-}
-
-impl FeedbackUi {
-    pub fn push(&mut self, item: RichText) {
-        let creation_time = SystemTime::now();
-        if let Some(true) = self
-            .items
-            .back()
-            .map(|(_, brt, _)| brt.text() == item.text())
-        {
-            let (_, _, count) = self.items.back_mut().unwrap();
-            *count += 1;
-        } else {
-            self.items.push_back((creation_time, item, 1));
-        }
-        if self.items.len() > self.num_shown {
-            self.items.pop_front();
-        }
-    }
-}
-
-impl Default for FeedbackUi {
-    fn default() -> Self {
-        Self {
-            items: VecDeque::new(),
-            num_shown: 5,
-        }
-    }
-}
-
-impl EguiInspect for FeedbackUi {
-    fn inspect(&self, _label: &str, ui: &mut egui::Ui) {
-        ui.horizontal(|ui| {
-            ui.label("Feedback:");
-            if self.items.is_empty() {
-                ui.label(RichText::new("Nothing yet.").color(Color32::WHITE));
-            } else {
-                ui.vertical(|ui| {
-                    for (ct, rt, count) in self.items.iter() {
-                        let dt: DateTime<Local> = (*ct).into();
-                        let mut rtv = vec![
-                            RichText::new(format!("[{}] ", dt.format("%H:%M:%S")))
-                                .color(Color32::WHITE),
-                            rt.clone(),
-                        ];
-                        if *count > 1 {
-                            rtv.push(RichText::new(format!(" (x{count})")));
-                        }
-                        ui.label(concat_rich_text(rtv));
-                    }
-                });
-            }
-        });
-    }
-
-    fn inspect_mut(&mut self, _label: &str, _ui: &mut egui::Ui) {
-        todo!()
-    }
-}
 
 #[derive(Default)]
 pub struct IndexSelection {
@@ -465,11 +403,22 @@ impl From<&BasisSource> for InitialBasis {
     }
 }
 
-#[derive(EguiInspect, Default)]
+#[derive(EguiInspect)]
+#[inspect(on_hover_text = "fp32 option currently has some issues")]
 pub struct SubstepParameters {
-    fp64: bool, // TODO: do not allow selecting when not supported
+    #[inspect(no_edit)]
+    fp64: bool,
     #[inspect(name = "separation params")]
     sep_params: OCLSeparationParams,
+}
+
+impl Default for SubstepParameters {
+    fn default() -> Self {
+        Self {
+            fp64: true,
+            sep_params: Default::default(),
+        }
+    }
 }
 
 impl SubstepParameters {

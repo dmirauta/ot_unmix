@@ -4,12 +4,10 @@ mod components;
 use std::path::PathBuf;
 
 use app::DecompGUIApp;
-use eframe::NativeOptions;
 use ot_unmix_core::{print_ocl_short_info, set_ocl_device};
 
 use clap::Parser;
 
-// TODO: Would be good to have a log to file option?
 #[derive(Parser)]
 struct CLIArgs {
     #[arg(long)]
@@ -27,9 +25,13 @@ struct CLIArgs {
     #[arg(long)]
     /// Preselect a serialised decomposition to resume work on
     decomp_path: Option<PathBuf>,
+    #[arg(short, long)]
+    /// Logs will be displayed in the gui, the terminal, and a log file which defaults to
+    /// <system_temp_dir>/ot_unmix_log, this path can be overriden here.
+    log_path: Option<PathBuf>,
 }
 
-fn main() -> eframe::Result<()> {
+fn main() -> egui_inspect::eframe::Result<()> {
     let args = CLIArgs::parse();
     let platform_idx = args.platform.unwrap_or(0);
     let device_idx = args.device.unwrap_or(0);
@@ -40,13 +42,14 @@ fn main() -> eframe::Result<()> {
 
     match args.nogui {
         true => Ok(()),
-        false => eframe::run_native(
+        false => egui_inspect::eframe::run_native(
             "OT Unmixing GUI",
-            NativeOptions::default(),
+            Default::default(),
             Box::new(|_cc| {
                 Ok(Box::new(DecompGUIApp::new(
                     args.dataset_dir,
                     args.decomp_path,
+                    args.log_path,
                 )))
             }),
         ),
