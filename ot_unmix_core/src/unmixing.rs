@@ -26,11 +26,11 @@ use super::data::Signature;
 
 // NOTE: Largely unused placeholder option/partial implementation, as we need only really change
 // types for OpenCL methods and cast to host precission there.
-#[cfg(fp32)]
-/// floating point precission of crate/host
-pub type F = f32;
-
-#[cfg(not(fp32))]
+// #[cfg(fp32)]
+// /// floating point precission of crate/host
+// pub type F = f32;
+//
+// #[cfg(not(fp32))]
 /// floating point precission of crate/host
 pub type F = f64;
 

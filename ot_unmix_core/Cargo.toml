@@ -12,7 +12,7 @@ egui_plot = { version = "0.28", optional = true }
 rfd = { version = "0.14", optional = true }
 ocl = "0.19"
 # simple_ocl = { path = "../../simple_ocl/simple_ocl" }
-simple_ocl = { git = "https://github.com/dmirauta/simple_ocl" }
+simple_ocl = { git = "https://github.com/dmirauta/simple_ocl", rev = "f8fd323d5c88e828885b7e0538d8b741b5cd2fd3" }
 # vectoriselp = { path = "../../vectorise_lp" }
 vectoriselp = { git = "https://github.com/dmirauta/vectorise_lp" }
 geo = "0.28"

@@ -1,9 +1,6 @@
 //! Data structures defines and data loading
 
 use std::collections::HashMap;
-#[cfg(fp32)]
-use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2};
-#[cfg(not(fp32))]
 use std::f64::consts::{FRAC_2_SQRT_PI, SQRT_2};
 use std::fs;
 use std::path::Path;
