@@ -9,11 +9,11 @@ use egui_inspect::egui::{
 use egui_inspect::EguiInspect;
 use egui_plot::{Line, Plot, PlotBounds, PlotPoints, PlotUi, Polygon};
 use log::warn;
-use ndarray::{s, Array1, Array2, Axis};
 
 use ot_unmix_core::{
     data::{pairs, Signature, Stick},
     inspect::{setup_plot, SMOOTHING_OPT},
+    ndarray::{s, Array1, Array2, Axis},
     substeps::{
         ocl::{OCLBarycenterCompute, OCLSeparationCompute, OCLSeparationParams},
         traits::{ComputesBarycenter, ComputesSeparation},
@@ -21,9 +21,7 @@ use ot_unmix_core::{
     unmixing::{InitialBasis, EPSILON},
 };
 
-use crate::app::compute_ongoing;
-
-use super::app::{CMAP_FREQS, KNOWN_BASES};
+use crate::app::{compute_ongoing, CMAP_FREQS, KNOWN_BASES};
 
 static SEG_COST_INFO: &str =
     "Segmentation cost (without penalties if applicable), indicating amount of overall \"warping\".

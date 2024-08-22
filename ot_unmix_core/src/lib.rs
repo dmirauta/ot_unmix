@@ -10,3 +10,6 @@ pub mod transforms;
 pub mod unmixing;
 
 pub use simple_ocl::{print_ocl_short_info, set_ocl_device};
+
+pub use ndarray;
+pub use ndarray_rand;

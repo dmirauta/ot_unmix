@@ -3077,8 +3077,6 @@ dependencies = [
  "egui_plot",
  "iter_tools",
  "log",
- "ndarray 0.15.6",
- "ndarray-rand",
  "ot_unmix_core",
  "rfd",
  "serde",

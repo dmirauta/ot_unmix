@@ -21,21 +21,19 @@ use egui_inspect::{
     logging::{setup_mixed_logger, FileLogOption},
 };
 use log::{error, info, warn};
-use ndarray::{s, Array1, Array2, Axis};
 
 use ot_unmix_core::{
     data::{pairs, CleaningIntermediate, Signature},
     dataset::{default_pipeline, on_dir_created, Dataset, TaggedSignatures},
     inspect::SMOOTHING_OPT,
+    ndarray::{s, Array1, Array2, Axis},
     transforms::PipelineItem,
     unmixing::{bson_read, bson_write, AnnotatedOTDecomp, AnomLPOut, InitialBasis, OTDecomp},
 };
 
-use crate::components::SubstepParameters;
-
-use super::components::{
+use crate::components::{
     smoothed_sig, ExportOptions, IndexSelection, IndexSelectionUi, InitialParams,
-    PeriodicCmapFreqs, PreviewedComponent, SummaryTable, TransportPlanVis,
+    PeriodicCmapFreqs, PreviewedComponent, SubstepParameters, SummaryTable, TransportPlanVis,
 };
 
 static CLEANING_PIPELINE_INFO: &str =

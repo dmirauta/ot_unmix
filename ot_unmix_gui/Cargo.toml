@@ -13,9 +13,7 @@ egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_2
 egui_extras = "0.28"
 egui_plot = "0.28"
 rfd = "0.14"
-# vectoriselp = { path = "../vectorise_lp" }
-ndarray = { version = "0.15", features = ["approx", "serde"] }
-ndarray-rand = "0.14"
+
 chrono = "0.4"
 serde = "1.0"
 iter_tools = "0.20"
