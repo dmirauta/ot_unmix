@@ -1,5 +1,6 @@
 //! Defines inspect methods for core structs where possible and inspectable wrappers otherwise
 use crate::data::{sort_sticks, CleaningIntermediate, Signature, Stick, XYData};
+use crate::rhai_transform::RhaiTransform;
 use egui_inspect::egui::{self, Color32, Stroke};
 use egui_inspect::EguiInspect;
 use egui_plot::{Legend, Line, Plot, PlotBounds, PlotPoints, PlotUi, Polygon};
@@ -372,4 +373,41 @@ pub fn code_edit(code: &mut String, ui: &mut egui::Ui) {
             }
         }
     });
+}
+
+impl EguiInspect for RhaiTransform {
+    fn inspect(&self, _label: &str, _ui: &mut egui::Ui) {
+        todo!()
+    }
+
+    fn inspect_mut(&mut self, _label: &str, ui: &mut egui::Ui) {
+        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
+            ui.label("Visit the Rhai language reference");
+            ui.hyperlink_to(
+                "scripting section",
+                "https://rhai.rs/book/language/comments.html",
+            );
+            ui.label("for transform syntax.");
+        });
+        match self.rc.parse_feedback.is_empty() {
+            true => {
+                ui.label("Parse feedback: None (looks good)");
+            }
+            false => self.rc.parse_feedback.inspect("Parse feedback", ui),
+        }
+        code_edit(&mut self.code, ui);
+        if self.rc.parsed_code != self.code {
+            match self.rc.engine.compile(self.code.as_str()) {
+                Ok(ast) => {
+                    self.rc.ast = Some(ast);
+                    self.rc.parse_feedback = String::new();
+                }
+                Err(e) => {
+                    self.rc.ast = None;
+                    self.rc.parse_feedback = format!("Rhai parse error: {e:?}");
+                }
+            }
+            self.rc.parsed_code.clone_from(&self.code);
+        }
+    }
 }

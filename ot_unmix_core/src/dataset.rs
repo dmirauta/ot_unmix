@@ -1,6 +1,12 @@
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{
+    collections::HashMap,
+    fs::{self, DirEntry},
+    path::PathBuf,
+};
 
 use rayon::prelude::*;
+
+use crate::dataloaders::{combined::CombinedLoader, traits::DataLoader};
 
 use super::{
     data::{CleaningIntermediate, Signature, XYData},
@@ -45,6 +51,13 @@ pub struct Dataset {
     pub cleaned_bases: TaggedSignatures,
 }
 
+fn files_in_dir(dir: PathBuf) -> Vec<DirEntry> {
+    let dir_entries = fs::read_dir(dir).unwrap().filter_map(|fr| fr.ok());
+    dir_entries
+        .filter(|de| de.file_type().unwrap().is_file())
+        .collect()
+}
+
 impl Dataset {
     pub fn load_dir(&mut self, dir: PathBuf) {
         let mixed_dir = dir.join("mixed patterns");
@@ -55,7 +68,11 @@ impl Dataset {
             return;
         }
 
-        self.loaded_data = XYData::get_all_in_dir(mixed_dir);
+        // NOTE: Could use different loaders for mixed and bases, could accept these as input.
+        let loader = CombinedLoader::default();
+
+        let mixed_files = files_in_dir(mixed_dir);
+        self.loaded_data = loader.parse_relevant_files(mixed_files.as_slice());
         self.cleaned_data = HashMap::new();
 
         if !basis_dir.exists() {
@@ -63,7 +80,8 @@ impl Dataset {
             return;
         }
 
-        self.loaded_bases = XYData::get_all_in_dir(basis_dir);
+        let basis_files = files_in_dir(basis_dir);
+        self.loaded_bases = loader.parse_relevant_files(basis_files.as_slice());
         self.cleaned_bases = HashMap::new();
 
         match (self.loaded_data.len(), self.loaded_bases.len()) {

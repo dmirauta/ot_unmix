@@ -1,6 +1,7 @@
 extern crate ocl;
 
 pub mod data;
+pub mod dataloaders;
 pub mod dataset;
 #[cfg(feature = "gui")]
 pub mod inspect;

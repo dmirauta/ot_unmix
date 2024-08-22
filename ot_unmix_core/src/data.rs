@@ -10,92 +10,6 @@ use iter_tools::Itertools;
 use super::transforms::{PipelineItem, XYTransform};
 use super::unmixing::{EPSILON, F};
 
-fn collect_numeric_literals(line: &str, max_literals: usize) -> Vec<F> {
-    let mut num_begin = None;
-    let mut nums = vec![];
-    for (i, c) in line
-        .chars()
-        .chain(['\n']) // ensure line is ended on non-numeric character, so that last number is added
-        .enumerate()
-    {
-        match c {
-            '0'..='9' | '.' | '-' | 'e' => {
-                if num_begin.is_none() {
-                    num_begin = Some(i);
-                }
-            }
-            _ => {
-                if let Some(begin) = num_begin {
-                    // ignoring ill formed numeric char patterns like "-.-"
-                    if let Ok(n) = line[begin..i].parse::<F>() {
-                        nums.push(n);
-                        num_begin = None;
-                    }
-                }
-            }
-        }
-        if nums.len() >= max_literals {
-            break;
-        }
-    }
-    nums
-}
-
-fn parse_xy_lines(file: &str, discard_neg_weights: bool) -> Vec<[F; 2]> {
-    let mut out = vec![];
-    for (i, line) in file.lines().enumerate() {
-        let nums = collect_numeric_literals(line, 2);
-        match nums.len() {
-            0 | 1 => println!("Too few numbers on line {i}"),
-            _ => {
-                if !(discard_neg_weights && nums[1] <= 0.0) {
-                    out.push([nums[0], nums[1]])
-                }
-            }
-        }
-    }
-    out
-}
-
-#[test]
-fn test_parse() {
-    let input = r"
- 10.000    29477
- 10.020    -29415
- 1.004e1,    29499
-    ";
-    let xy = parse_xy_lines(input, true);
-    assert_eq!(xy, vec![[10.0, 29477.0], [10.04, 29499.0]]);
-}
-
-pub fn parse_xy(filepath: impl AsRef<Path>, discard_neg_weights: bool) -> Vec<[F; 2]> {
-    let mut out = vec![];
-    if let Ok(file) = fs::read_to_string(filepath.as_ref()) {
-        out = parse_xy_lines(file.as_str(), discard_neg_weights);
-    } else {
-        println!("failed to read {:?}", filepath.as_ref());
-    }
-    out
-}
-
-pub fn parse_files_with_ext(
-    dir: impl AsRef<Path>,
-    ext: &str,
-    discard_neg_weights: bool,
-) -> HashMap<String, Vec<[F; 2]>> {
-    // TODO: many unwraps here... make more graceful?
-    let mut xy_set = HashMap::new();
-    let dir_entries = fs::read_dir(dir).unwrap().filter_map(|fr| fr.ok());
-    let files = dir_entries.filter(|de| de.file_type().unwrap().is_file());
-    for file in files.filter(|f| f.file_name().into_string().unwrap().contains(ext)) {
-        let xy = parse_xy(file.path(), discard_neg_weights);
-        if !xy.is_empty() {
-            xy_set.insert(file.file_name().into_string().unwrap(), xy);
-        }
-    }
-    xy_set
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Stick {
     pub position: F,
@@ -247,8 +161,6 @@ impl From<(Vec<F>, Vec<F>)> for XYData {
     }
 }
 
-static RECOGNISED_XY_EXT: &[&str] = &["xy", "ASC"];
-
 #[allow(dead_code)]
 impl XYData {
     pub fn to_sig(self) -> Option<Signature> {
@@ -288,25 +200,6 @@ impl XYData {
             XYData::Loose(xy) => Some(xy),
             XYData::Placeholder => None,
         }
-    }
-
-    pub fn get_all_in_dir(dir: impl AsRef<Path>) -> HashMap<String, Self> {
-        let mut data = HashMap::new();
-        for &ext in RECOGNISED_XY_EXT.iter() {
-            data.extend(
-                parse_files_with_ext(dir.as_ref(), ext, true)
-                    .into_iter()
-                    .map(|(filename, xy)| {
-                        let short_filename = if filename.contains('/') {
-                            filename.split('/').last().unwrap().to_string()
-                        } else {
-                            filename
-                        };
-                        (short_filename, XYData::Loose(xy))
-                    }),
-            );
-        }
-        data
     }
 
     pub fn save_to_file(&self, dir: &Path, name: impl Into<String>) {
