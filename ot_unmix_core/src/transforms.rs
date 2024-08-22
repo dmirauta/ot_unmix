@@ -13,19 +13,28 @@ pub trait XYTransform {
     fn apply(&self, input: &mut CleaningIntermediate);
 }
 
-macro_rules! gen_pipeline_item_from_opts {
+macro_rules! define_pipeline_item_from_opts {
     ($($option: ident),*) => {
-        #[cfg_attr(feature = "gui", derive(egui_inspect::EguiInspect))]
+        #[cfg_attr(feature = "gui", derive(egui_inspect::EguiInspect, egui_inspect::DPEQ))]
         pub enum PipelineItem {
             $($option {
                 #[cfg_attr(feature = "gui", inspect(name = ""))]
                 transform: $option,
             },)*
         }
+
+        impl XYTransform for PipelineItem {
+            fn apply(&self, input: &mut CleaningIntermediate) {
+                match self {
+                    $(PipelineItem::$option {transform} => transform.apply(input)),*
+                }
+            }
+        }
     }
 }
 
-gen_pipeline_item_from_opts!(
+// defines PipelineItem enum
+define_pipeline_item_from_opts!(
     XLimit,
     SimpleDownsample,
     ConvexBaseline,
@@ -35,31 +44,10 @@ gen_pipeline_item_from_opts!(
     XYAsSignature
 );
 
-// NOTE: Comparing by variant only, for purposes of dropdown (EguiInspect)
-impl PartialEq for PipelineItem {
-    fn eq(&self, other: &Self) -> bool {
-        core::mem::discriminant(self) == core::mem::discriminant(other)
-    }
-}
-
 impl Default for PipelineItem {
     fn default() -> Self {
         Self::XLimit {
             transform: Default::default(),
-        }
-    }
-}
-
-impl XYTransform for PipelineItem {
-    fn apply(&self, input: &mut CleaningIntermediate) {
-        match self {
-            PipelineItem::XLimit { transform } => transform.apply(input),
-            PipelineItem::SimpleDownsample { transform } => transform.apply(input),
-            PipelineItem::ConvexBaseline { transform } => transform.apply(input),
-            PipelineItem::SlidingEllipseBaseline { transform } => transform.apply(input),
-            PipelineItem::RhaiTransform { transform } => transform.apply(input),
-            PipelineItem::XYToSignature { transform } => transform.apply(input),
-            PipelineItem::XYAsSignature { transform } => transform.apply(input),
         }
     }
 }
