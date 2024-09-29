@@ -338,6 +338,7 @@ pub fn code_edit(code: &mut String, ui: &mut egui::Ui) {
         let mut layout_job = egui_extras::syntax_highlighting::highlight(
             ui.ctx(),
             &Default::default(),
+            &Default::default(),
             string,
             "rust",
         );

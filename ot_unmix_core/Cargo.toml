@@ -6,26 +6,26 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_28", optional = true }
-egui_extras = { version = "0.28", optional = true }
-egui_plot = { version = "0.28", optional = true }
-rfd = { version = "0.14", optional = true }
+egui_inspect = { git = "https://github.com/dmirauta/egui_inspect", branch = "0_29", optional = true }
+egui_extras = { version = "0.29", optional = true }
+egui_plot = { version = "0.29", optional = true }
+rfd = { version = "0.15", optional = true }
 
 ocl = "0.19"
 simple_ocl = { git = "https://github.com/dmirauta/simple_ocl", rev = "f8fd323d5c88e828885b7e0538d8b741b5cd2fd3" }
 vectoriselp = { git = "https://github.com/dmirauta/vectorise_lp" }
 
-# matching vectoriselp versions
+# matching vectoriselp&simple_ocl versions
 ndarray = { version = "0.15", features = ["approx", "serde"] }
 ndarray-rand = "0.14"
 
 geo = "0.28"
-interp = "1.0"
+interp = "2"
 serde = "1.0"
 bson = "2.7"
 rhai = { version = "1.18", features = ["sync"] }
 rayon = "1.8"
-iter_tools = "0.20"
+iter_tools = "0.21"
 log = "0.4"
 constcat = "0.5"
 

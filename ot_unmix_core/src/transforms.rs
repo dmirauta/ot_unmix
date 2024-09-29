@@ -6,7 +6,7 @@ use super::{
     rhai_transform::RhaiTransform,
 };
 use geo::{ConvexHull, Coord, CoordsIter, LineString, Polygon};
-use interp::interp;
+use interp::{interp, InterpMode};
 use ndarray::Array1;
 
 pub trait XYTransform {
@@ -122,7 +122,7 @@ impl XYTransform for ConvexBaseline {
 
                 let baseline: Vec<_> = xy
                     .iter()
-                    .map(|[x, _]| [*x, interp(&bxv, &byv, *x)])
+                    .map(|[x, _]| [*x, interp(&bxv, &byv, *x, &InterpMode::default())])
                     .collect();
 
                 input.apply_baseline(baseline);

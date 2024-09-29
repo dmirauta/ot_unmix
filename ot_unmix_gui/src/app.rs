@@ -837,7 +837,10 @@ impl EguiInspect for OTDecompUI {
         if let Some(decomp) = &self.aotdecomp {
             if ui.button("Save decomposition").clicked() {
                 if let Some(fpath) = rfd::FileDialog::new().set_directory(".").save_file() {
-                    bson_write(decomp, fpath)
+                    match decomp.try_lock() {
+                        Ok(decomp) => bson_write(&*decomp, fpath),
+                        Err(e) => warn!("Mutex unlock fail: {e}"),
+                    }
                 }
             }
         }
