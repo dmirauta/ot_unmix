@@ -1,7 +1,6 @@
 //! Defines visual elements/subsections of the GUI.
 
-use std::{error::Error, ops::Range, str::FromStr};
-
+use crate::app::{compute_ongoing, CMAP_FREQS, KNOWN_BASES};
 use egui_extras::{Column, TableBuilder};
 use egui_inspect::egui::{
     self, text::LayoutJob, Align, Color32, ComboBox, FontSelection, RichText, Stroke, Style,
@@ -9,19 +8,17 @@ use egui_inspect::egui::{
 use egui_inspect::EguiInspect;
 use egui_plot::{Line, Plot, PlotBounds, PlotPoints, PlotUi, Polygon};
 use log::warn;
-
 use ot_unmix_core::{
     data::{pairs, Signature, Stick},
     inspect::{setup_plot, SMOOTHING_OPT},
     ndarray::{s, Array1, Array2, Axis},
     substeps::{
         ocl::{OCLBarycenterCompute, OCLSeparationCompute, OCLSeparationParams},
-        traits::{ComputesBarycenter, ComputesSeparation},
+        ComputesBarycenter, ComputesSeparation,
     },
     unmixing::{InitialBasis, EPSILON},
 };
-
-use crate::app::{compute_ongoing, CMAP_FREQS, KNOWN_BASES};
+use std::{error::Error, ops::Range, str::FromStr};
 
 static SEG_COST_INFO: &str =
     "Segmentation cost (without penalties if applicable), indicating amount of overall \"warping\".
@@ -402,9 +399,9 @@ impl From<&BasisSource> for InitialBasis {
 }
 
 #[derive(EguiInspect)]
-#[inspect(on_hover_text = "fp32 option currently has some issues")]
+#[inspect(on_hover_text = "32 bit floats currently have some issues")]
 pub struct SubstepParameters {
-    #[inspect(no_edit)]
+    #[inspect(no_edit, name = "use 64 bit floats")]
     fp64: bool,
     #[inspect(name = "separation params")]
     sep_params: OCLSeparationParams,

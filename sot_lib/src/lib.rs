@@ -2,8 +2,6 @@
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
-use dists_ffi::{Signature_t, TraceData_t};
-
 mod dists_ffi {
     include!(concat!(env!("OUT_DIR"), "/sot_bindings.rs"));
 
@@ -17,6 +15,8 @@ mod dists_ffi {
         }
     }
 }
+
+use dists_ffi::{Signature_t, TraceData_t};
 
 struct TraceDataOwned {
     transfer: Vec<f64>,

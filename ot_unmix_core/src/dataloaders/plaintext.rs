@@ -1,13 +1,11 @@
 //! Data structures defines and data loading
 
+use super::DataLoader;
+use crate::data::XYData;
+use crate::unmixing::F;
 use std::collections::{HashMap, HashSet};
 use std::fs::{self, DirEntry};
 use std::path::Path;
-
-use crate::data::XYData;
-use crate::unmixing::F;
-
-use super::traits::DataLoader;
 
 static PLAINTEXT_EXTS: &[&str] = &["xy", "ASC"];
 
@@ -111,7 +109,7 @@ impl DataLoader for PlaintextLoader {
                     .into_iter()
                     .map(|(filename, xy)| {
                         let short_filename = if filename.contains('/') {
-                            filename.split('/').last().unwrap().to_string()
+                            filename.split('/').next_back().unwrap().to_string()
                         } else {
                             filename
                         };

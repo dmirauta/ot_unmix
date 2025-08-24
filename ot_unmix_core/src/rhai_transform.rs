@@ -6,7 +6,6 @@ use rhai::{
     },
     Dynamic, Engine, Scope, AST,
 };
-
 use super::{data::XYData, transforms::XYTransform};
 
 macro_rules! register_packages {
@@ -17,7 +16,7 @@ macro_rules! register_packages {
 
 // TODO: Limit how often feedback can be emitted and allow runtime errors again?
 pub struct RhaiCommon {
-    pub engine: Engine,
+    pub engine: Engine, //TODO: Engine makes this struct large, which in turn makes RhaiTransform large, however, may need to be careful with making global due to multithreaded use?
     pub ast: Option<AST>,
     pub parsed_code: String,
     pub parse_feedback: String,

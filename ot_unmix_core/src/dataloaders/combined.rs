@@ -1,8 +1,6 @@
-use std::collections::{HashMap, HashSet};
-
+use super::{plaintext::PlaintextLoader, DataLoader};
 use log::warn;
-
-use super::{plaintext::PlaintextLoader, traits::DataLoader};
+use std::collections::{HashMap, HashSet};
 
 /// Applies multiple [DataLoader] implementors, to handle different file types. Does not expect
 /// overlap in handled types.
@@ -13,7 +11,7 @@ pub struct CombinedLoader {
 impl Default for CombinedLoader {
     fn default() -> Self {
         Self {
-            loaders: vec![Box::new(PlaintextLoader::default())],
+            loaders: vec![Box::new(PlaintextLoader)],
         }
     }
 }
@@ -23,8 +21,8 @@ impl DataLoader for CombinedLoader {
         let mut exts = HashSet::new();
         for loader in self.loaders.iter() {
             let new_exts = loader.handled_extensions();
-            if exts.intersection(&new_exts).count() > 0 {
-                warn!("Two data handlers registered for the same extension.");
+            for ext in exts.intersection(&new_exts) {
+                warn!("Two data handlers registered for {ext}.");
             }
             exts.extend(new_exts);
         }

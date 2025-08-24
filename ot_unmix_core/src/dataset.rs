@@ -1,18 +1,15 @@
+use super::{
+    data::{CleaningIntermediate, Signature, XYData},
+    transforms::PipelineItem,
+};
+use crate::dataloaders::{combined::CombinedLoader, DataLoader};
+use log::{error, info, warn};
+use rayon::prelude::*;
 use std::{
     collections::HashMap,
     fs::{self, DirEntry},
     path::PathBuf,
 };
-
-use rayon::prelude::*;
-
-use crate::dataloaders::{combined::CombinedLoader, traits::DataLoader};
-
-use super::{
-    data::{CleaningIntermediate, Signature, XYData},
-    transforms::PipelineItem,
-};
-use log::{error, info, warn};
 
 pub type TaggedDatapoints = HashMap<String, XYData>;
 pub type TaggedSignatures = HashMap<String, Signature>;

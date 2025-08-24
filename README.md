@@ -8,8 +8,9 @@ Git clone recursively to include the required c/opencl submodule `git clone --re
 
 ## Build
 
-Build with `cargo b -r`, or build and run the gui with the command `cargo r -r`.
-The produced binary is found under `$CARGO_TARGET_DIR/release/` (cargo target dir defaults to crate root).
+Build with `cargo b -r -p ot_unmix_gui`, or build and run the gui with the command `cargo r -r`.
+The produced binary is found under `$CARGO_TARGET_DIR/release/` (the cargo target directory defaults to `./target`).
+This can be copied to a folder on your path, e.g. `cp $CARGO_TARGET_DIR/release/ot_unmix_gui ~/.local/bin/`, for system wide access.
 
 ### Preliminaries
 

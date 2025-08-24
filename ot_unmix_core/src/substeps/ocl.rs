@@ -1,7 +1,7 @@
 use std::any::type_name;
 
 use crate::{
-    substeps::traits::{ComputesBarycenter, ComputesSeparation},
+    substeps::{ComputesBarycenter, ComputesSeparation, SignatureT},
     unmixing::{EPSILON, F},
 };
 use log::error;
@@ -151,7 +151,7 @@ where
 }
 
 impl ComputesBarycenter for OCLBarycenterCompute<f64> {
-    fn compute(&mut self, variations: Vec<(Array1<f64>, Array1<f64>, f64)>) -> Result<(), String> {
+    fn compute(&mut self, variations: Vec<SignatureT>) -> Result<(), String> {
         self.full_reduction(variations).map_err(|e| e.to_string())
         // TODO: Would be better to use something like `anyhow` crate errors?
     }
@@ -166,7 +166,7 @@ impl ComputesBarycenter for OCLBarycenterCompute<f64> {
 }
 
 impl ComputesBarycenter for OCLBarycenterCompute<f32> {
-    fn compute(&mut self, variations: Vec<(Array1<f64>, Array1<f64>, f64)>) -> Result<(), String> {
+    fn compute(&mut self, variations: Vec<SignatureT>) -> Result<(), String> {
         let variations_f32 = variations
             .into_iter()
             .map(|(sp, sw, w)| (sp.mapv(|v| v as f32), sw.mapv(|v| v as f32), w as f32))

@@ -283,7 +283,7 @@ impl DecompGUIApp {
 
             columns[1]
                 .vertical(|ui| {
-                    self.cleaning_pipeline.inspect_mut("cleaning pipeline", ui);
+                    self.cleaning_pipeline.inspect_mut("Cleaning pipeline", ui);
                 })
                 .response
                 .on_hover_text_at_pointer(CLEANING_PIPELINE_INFO);
@@ -483,7 +483,7 @@ impl eframe::App for DecompGUIApp {
         CentralPanel::default().show(ctx, |ui| {
             ScrollArea::vertical().show(ui, |ui| {
                 if !compute_ongoing() {
-                    ui.collapsing("data loading and preprocessing", |ui| {
+                    ui.collapsing("Data loading and preprocessing", |ui| {
                         self.loading_and_preprocessing(ui);
                     });
                 } else {
@@ -498,9 +498,9 @@ impl eframe::App for DecompGUIApp {
                     }
                 }
 
-                self.plot_preview.inspect("previewed data", ui);
+                self.plot_preview.inspect("Previewed data", ui);
 
-                ui.collapsing("decomposition", |ui| {
+                ui.collapsing("Decomposition", |ui| {
                     self.decomp_setup(ui);
                     self.otdecompui.inspect_mut("decomp visualisation", ui);
                 });

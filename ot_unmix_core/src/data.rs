@@ -204,7 +204,7 @@ impl XYData {
 
     pub fn save_to_file(&self, dir: &Path, name: impl Into<String>) {
         let sanitised_name = name.into().replace(|c| FORBIDDEN_CHARS.contains(&c), "");
-        let path = dir.join(format!("{}.xy", sanitised_name));
+        let path = dir.join(format!("{sanitised_name}.xy"));
         match self {
             XYData::Loose(xy) => {
                 let contents = xy.iter().map(|&[x, y]| format!("{x}, {y}")).join("\n");

@@ -19,15 +19,15 @@ vectoriselp = { git = "https://github.com/dmirauta/vectorise_lp" }
 ndarray = { version = "0.15", features = ["approx", "serde"] }
 ndarray-rand = "0.14"
 
-geo = "0.28"
+geo = "0.30"
 interp = "2"
 serde = "1.0"
 bson = "2.7"
 rhai = { version = "1.18", features = ["sync"] }
 rayon = "1.8"
-iter_tools = "0.21"
+iter_tools = "0.37"
 log = "0.4"
-constcat = "0.5"
+constcat = "0.6"
 
 [features]
 gui = ["dep:egui_extras", "dep:egui_plot", "dep:egui_inspect", "dep:rfd"]

@@ -1,5 +1,11 @@
 //! OpenCL implementation of OT based unmixing
 
+use super::data::Signature;
+use crate::substeps::{ComputesBarycenter, ComputesSeparation};
+use log::{error, info};
+use ndarray::{array, s, Array1, Array2, Array3, ArrayD, Axis};
+use ndarray_rand::{rand_distr::Uniform, RandomExt};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
     collections::HashMap,
     fs::{self, File},
@@ -8,19 +14,10 @@ use std::{
     path::Path,
     time::{Duration, SystemTime},
 };
-
-use log::{error, info};
-use ndarray::{array, s, Array1, Array2, Array3, ArrayD, Axis};
-use ndarray_rand::{rand_distr::Uniform, RandomExt};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use vectoriselp::{
     lp_wrap::{LPOutput, MiniLPSolver},
     ArrayExpr, LinearExpression, LinearProgram,
 };
-
-use crate::substeps::traits::{ComputesBarycenter, ComputesSeparation};
-
-use super::data::Signature;
 
 // have opted for relatively flat signature representations since thats how they are passed to OpenCL
 
