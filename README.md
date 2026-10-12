@@ -1,14 +1,13 @@
 # OT Unmixing
 
-OpenCL accelerated, basis variation insensitive unmixing algorithm, with an optional GUI interface.
-This is an implementation of my PhD work, a preview of which is available at [unmixing via optimal transport](https://openreview.net/forum?id=QjnVVrixPW), a more extensive version is in preparation.
-The older python implementation is found at [SOTU](https://github.com/dmirauta/SOTU).
+An implementation of [Robust blind unmixing](https://arxiv.org/abs/2610.04091), a basis variation insensitive unmixing algorithm.
+This implementation is OpenCL accelerated, and has an optional GUI interface, allowing one to conduct live visualised guided/exploratory decompositions.
 
 Git clone recursively to include the required c/opencl submodule `git clone --recursive https://github.com/dmirauta/ot_unmix`.
 
 ## Build
 
-Build with `cargo b -r -p ot_unmix_gui`, or build and run the gui with the command `cargo r -r`.
+One can build and run the binary in one with `cargo r -r`, for building without running use `cargo b -r -p ot_unmix_gui` instead.
 The produced binary is found under `$CARGO_TARGET_DIR/release/` (the cargo target directory defaults to `./target`).
 This can be copied to a folder on your path, e.g. `cp $CARGO_TARGET_DIR/release/ot_unmix_gui ~/.local/bin/`, for system wide access.
 
